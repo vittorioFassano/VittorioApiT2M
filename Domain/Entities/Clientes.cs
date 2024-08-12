@@ -1,6 +1,6 @@
 namespace VittorioApiT2M.Domain.Entities
 {
-    public class Cliente
+    public class Clientes
     {
         public required int Id { get; set; }
         public required string Nome { get; set; }

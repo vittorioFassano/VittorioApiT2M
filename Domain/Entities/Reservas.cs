@@ -6,10 +6,26 @@ namespace VittorioApiT2M.Domain.Entities
     {
         public int Id { get; set; }
         public int ClienteId { get; set; }
-        public required Cliente Cliente { get; set; }
-        public required DateTime DataReserva { get; set; }
-        public required TimeSpan HoraReserva { get; set; }
-        public required int NumeroPessoas { get; set; }
-        public required bool Confirmada { get; set; }
+        public Clientes? Cliente { get; set; }
+        public DateTime DataReserva { get; set; }
+        public TimeSpan HoraReserva { get; set; }
+        public int NumeroPessoas { get; set; }
+        public bool Confirmada { get; set; }
+
+        public Reservas(int clienteId, DateTime dataReserva, TimeSpan horaReserva, int numeroPessoas, bool confirmada, Clientes cliente)
+        {
+            ClienteId = clienteId;
+            DataReserva = dataReserva;
+            HoraReserva = horaReserva;
+            NumeroPessoas = numeroPessoas;
+            Confirmada = confirmada;
+            Cliente = cliente;
+        }
+
+        public Reservas()
+        {
+
+        }
     }
+
 }

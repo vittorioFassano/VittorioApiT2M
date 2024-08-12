@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using VittorioApiT2M.Infrastructure.Extensions;
+
+using System.Data;
 
 namespace VittorioApiT2M.API
 {
@@ -17,8 +18,15 @@ namespace VittorioApiT2M.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // Adiciona os controladores MVC
             services.AddControllers();
 
+            // Registro de IDbConnection com uma implementação concreta (SqlConnection)
+            services.AddScoped<IDbConnection>(sp =>
+                new SqlConnection(Configuration.GetConnectionString("DefaultConnection")));
+
+            // Registra os serviços de infraestrutura (repositórios, etc.)
+            services.AddInfrastructureServices();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
