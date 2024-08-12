@@ -1,0 +1,39 @@
+# Arquivos e pastas gerados pela build
+bin/
+obj/
+
+# Arquivos de configuração do usuário e sistema
+*.user
+*.suo
+*.userosscache
+*.suo
+*.csproj.user
+*.vscode/
+
+# Arquivos de configuração de IDE
+*.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Configurações específicas do Visual Studio
+.vs/
+*.csproj.user
+*.suo
+*.user
+*.ncb
+*.suo
+*.userosscache
+
+# Arquivos de log e dados temporários
+*.log
+*.tmp
+*.swp
+*.bak
+
+# Arquivos de configuração específicos do ambiente de desenvolvimento
+appsettings.Development.json
+
+# Arquivos de cache do NuGet
+*.nupkg
+*.snupkg
+packages/
