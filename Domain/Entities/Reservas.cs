@@ -27,5 +27,4 @@ namespace VittorioApiT2M.Domain.Entities
 
         }
     }
-
 }

@@ -21,6 +21,7 @@ namespace VittorioApiT2M.Application.Services
                 Id = r.Id,
                 ClienteId = r.ClienteId,
                 DataReserva = r.DataReserva,
+                HoraReserva = r.HoraReserva,
                 NumeroPessoas = r.NumeroPessoas,
                 Confirmada = r.Confirmada
             });
@@ -32,9 +33,11 @@ namespace VittorioApiT2M.Application.Services
             {
                 ClienteId = reservaDto.ClienteId,
                 DataReserva = reservaDto.DataReserva,
+                HoraReserva = reservaDto.HoraReserva,
                 NumeroPessoas = reservaDto.NumeroPessoas,
                 Confirmada = reservaDto.Confirmada
             };
+
             await _reservaRepository.Adicionar(reserva);
         }
     }

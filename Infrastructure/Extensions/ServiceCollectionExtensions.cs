@@ -8,11 +8,9 @@ namespace VittorioApiT2M.Infrastructure.Extensions
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
-            // Registrar os repositórios no contêiner de injeção de dependência
+            //contêiner de injeção de dependência
             services.AddScoped<IReservaRepository, ReservaRepository>();
             services.AddScoped<IClienteRepository, ClienteRepository>();
-
-            // Se precisar de outros serviços, adicione-os aqui
 
             return services;
         }
