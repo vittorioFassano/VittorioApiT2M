@@ -17,7 +17,7 @@ namespace VittorioApiT2M.Application.DTOs
         public TimeSpan HoraReserva { get; set; }
 
         [Required(ErrorMessage = "O número de pessoas é obrigatório.")]
-        [Range(1, 100, ErrorMessage = "O número de pessoas deve estar entre 1 e 20")]
+        [Range(1, 20, ErrorMessage = "O número de pessoas deve estar entre 1 e 20")]
         public int NumeroPessoas { get; set; }
 
         [Required(ErrorMessage = "A confirmação da reserva é obrigatória.")]

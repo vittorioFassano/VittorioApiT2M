@@ -41,6 +41,32 @@ namespace VittorioApiT2M.Application.Services
             }
         }
 
+        public async Task AtualizarReserva(ReservaDto reservaDto)
+        {
+            try
+            {
+                // Converte o DTO para a entidade do domínio
+                var reserva = new Reservas
+                {
+                    Id = reservaDto.Id,
+                    ClienteId = reservaDto.ClienteId,
+                    DataReserva = reservaDto.DataReserva,
+                    HoraReserva = reservaDto.HoraReserva,
+                    NumeroPessoas = reservaDto.NumeroPessoas,
+                    Confirmada = reservaDto.Confirmada
+                };
+
+                // Atualiza a reserva utilizando o repositório
+                await _reservaRepository.Atualizar(reserva);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao atualizar reserva: {ex.Message}");
+                throw new ApplicationException("Erro ao atualizar reserva.", ex);
+            }
+        }
+
+
         public async Task AdicionarReserva(ReservaDto reservaDto)
         {
             try
@@ -102,6 +128,8 @@ namespace VittorioApiT2M.Application.Services
                 throw new ApplicationException($"Erro ao obter reserva com ID {id}.", ex);
             }
         }
+
+
     }
 }
 
