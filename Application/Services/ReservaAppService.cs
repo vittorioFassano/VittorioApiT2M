@@ -45,7 +45,6 @@ namespace VittorioApiT2M.Application.Services
         {
             try
             {
-                // Converte o DTO para a entidade do domínio
                 var reserva = new Reservas
                 {
                     Id = reservaDto.Id,
@@ -56,7 +55,6 @@ namespace VittorioApiT2M.Application.Services
                     Confirmada = reservaDto.Confirmada
                 };
 
-                // Atualiza a reserva utilizando o repositório
                 await _reservaRepository.Atualizar(reserva);
             }
             catch (Exception ex)
@@ -65,7 +63,6 @@ namespace VittorioApiT2M.Application.Services
                 throw new ApplicationException("Erro ao atualizar reserva.", ex);
             }
         }
-
 
         public async Task AdicionarReserva(ReservaDto reservaDto)
         {
@@ -129,7 +126,25 @@ namespace VittorioApiT2M.Application.Services
             }
         }
 
+        public async Task ConfirmarReserva(int id)
+        {
+            try
+            {
+                var reserva = await _reservaRepository.ObterPorId(id);
+                if (reserva == null)
+                {
+                    throw new ApplicationException($"Reserva com ID {id} não encontrada.");
+                }
 
+                reserva.Confirmada = true;
+                await _reservaRepository.Atualizar(reserva);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao confirmar reserva com ID {id}: {ex.Message}");
+                throw new ApplicationException($"Erro ao confirmar reserva com ID {id}.", ex);
+            }
+        }
     }
 }
 

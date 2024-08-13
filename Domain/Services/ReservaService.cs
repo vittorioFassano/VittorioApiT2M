@@ -34,5 +34,6 @@ namespace VittorioApiT2M.Domain.Services
                 throw new ApplicationException("Ocorreu um erro ao confirmar a reserva.", ex);
             }
         }
+
     }
 }

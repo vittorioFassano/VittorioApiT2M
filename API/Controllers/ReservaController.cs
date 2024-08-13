@@ -39,7 +39,7 @@ namespace VittorioApiT2M.Api.Controllers
         {
             if (!ModelState.IsValid || reservaDto.DataReserva == default || reservaDto.HoraReserva == default)
             {
-                return BadRequest("Dados da reserva incompletos ou inválidos.");
+                return BadRequest("Dados da reserva incompletos ou inválidos");
             }
 
             try
@@ -56,31 +56,26 @@ namespace VittorioApiT2M.Api.Controllers
             }
         }
 
-
         [HttpPut("{id}")]
         public async Task<IActionResult> AtualizarReserva(int id, [FromBody] ReservaDto reservaDto)
         {
-            // Verifica se o modelo está válido e se os campos DataReserva e HoraReserva não são padrões
             if (!ModelState.IsValid || reservaDto.DataReserva == default || reservaDto.HoraReserva == default)
             {
-                return BadRequest("Dados da reserva incompletos ou inválidos.");
+                return BadRequest("Dados da reserva incompletos ou inválidos");
             }
 
-            // Obtém a reserva existente
             var reservaExistente = await _reservaAppService.ObterReservaPorId(id);
             if (reservaExistente == null)
             {
-                return NotFound();
+                return NotFound($"Reserva com ID {id} não encontrada.");
             }
 
-            // Atualiza os campos da reserva existente com os novos valores
             reservaExistente.ClienteId = reservaDto.ClienteId;
             reservaExistente.DataReserva = reservaDto.DataReserva;
             reservaExistente.HoraReserva = reservaDto.HoraReserva;
             reservaExistente.NumeroPessoas = reservaDto.NumeroPessoas;
             reservaExistente.Confirmada = reservaDto.Confirmada;
 
-            // Atualiza a reserva
             try
             {
                 await _reservaAppService.AtualizarReserva(reservaExistente);
@@ -90,7 +85,8 @@ namespace VittorioApiT2M.Api.Controllers
                 return StatusCode(500, $"Erro ao atualizar reserva: {ex.Message}");
             }
 
-            return NoContent();
+            var reservaAtualizada = await _reservaAppService.ObterReservaPorId(id);
+            return Ok(reservaAtualizada);
         }
 
 
@@ -104,7 +100,34 @@ namespace VittorioApiT2M.Api.Controllers
             }
 
             await _reservaAppService.RemoverReserva(id);
-            return NoContent();
+            return Ok("Reserva cancelada!");
         }
+
+        [HttpPatch("{id}/confirmar")]
+        public async Task<IActionResult> ConfirmarReserva(int id)
+        {
+            try
+            {
+                var reserva = await _reservaAppService.ObterReservaPorId(id);
+
+                if (reserva == null)
+                {
+                    return NotFound($"Reserva com ID {id} não encontrada.");
+                }
+
+                if (reserva.Confirmada)
+                {
+                    return BadRequest("Você já confirmou essa reserva!");
+                }
+
+                await _reservaAppService.ConfirmarReserva(id);
+                return Ok("Reserva confirmada com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro ao confirmar reserva: {ex.Message}");
+            }
+        }
+
     }
 }
