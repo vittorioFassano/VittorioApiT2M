@@ -24,15 +24,12 @@ namespace VittorioApiT2M.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Adiciona os controladores MVC e configura os conversores personalizados
             services.AddControllers()
                 .AddCustomJsonConverters();
 
-            // Registro de IDbConnection com uma implementação concreta (NpgsqlConnection)
             services.AddScoped<IDbConnection>(sp =>
                 new NpgsqlConnection(Configuration.GetConnectionString("DefaultConnection")));
 
-            // Registra os serviços de infraestrutura (repositórios, etc.)
             services.AddInfrastructureServices();
             services.AddScoped<ReservaAppService>();
         }
@@ -49,8 +46,8 @@ namespace VittorioApiT2M.API
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection(); // Redireciona todas as requisições HTTP para HTTPS
-            app.UseStaticFiles(); // Serve arquivos estáticos da pasta wwwroot
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthorization();
 

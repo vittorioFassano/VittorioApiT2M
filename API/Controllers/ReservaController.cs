@@ -40,9 +40,9 @@ namespace VittorioApiT2M.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ReservaDto reservaDto)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || reservaDto.DataReserva == default || reservaDto.HoraReserva == default)
             {
-                return BadRequest(ModelState);
+                return BadRequest("Dados da reserva incompletos ou inválidos.");
             }
 
             try
@@ -58,7 +58,6 @@ namespace VittorioApiT2M.API.Controllers
                 return StatusCode(500, $"Erro ao criar reserva: {ex.Message}");
             }
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
