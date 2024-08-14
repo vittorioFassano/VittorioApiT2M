@@ -120,11 +120,18 @@ namespace VittorioApiT2M.Api.Controllers
                     return BadRequest("Você já confirmou essa reserva!");
                 }
 
+                // Aqui o serviço já lida com a validação de 24 horas antes
                 await _reservaAppService.ConfirmarReserva(id);
                 return Ok("Reserva confirmada com sucesso!");
             }
+            catch (ApplicationException ex)
+            {
+                // Retorna a mensagem de erro específico de validação
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
+                // Retorna um erro genérico
                 return StatusCode(500, $"Erro ao confirmar reserva: {ex.Message}");
             }
         }

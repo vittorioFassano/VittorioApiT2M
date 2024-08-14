@@ -120,5 +120,35 @@ namespace VittorioApiT2M.Infrastructure.Repositories
                 throw;
             }
         }
+        public async Task<IEnumerable<Reservas>> ObterReservasPorClienteIdESemana(int clienteId, DateTime inicioSemana, DateTime fimSemana)
+        {
+            if (inicioSemana > fimSemana)
+            {
+                throw new ArgumentException("A data de início da semana não pode ser posterior à data de fim da semana.");
+            }
+
+            try
+            {
+                var query = @"
+            SELECT * 
+            FROM Reservas 
+            WHERE ClienteId = @ClienteId 
+            AND DataReserva >= @InicioSemana 
+            AND DataReserva <= @FimSemana";
+
+                return await _dbConnection.QueryAsync<Reservas>(query, new { ClienteId = clienteId, InicioSemana = inicioSemana.Date, FimSemana = fimSemana.Date });
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro inesperado: {ex.Message}");
+                throw;
+            }
+        }
+
     }
 }
