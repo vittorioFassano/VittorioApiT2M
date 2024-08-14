@@ -163,7 +163,7 @@ namespace VittorioApiT2M.Application.Services
 
             var dataHoraReserva = reservaDto.DataReserva.Date.Add(reservaDto.HoraReserva);
 
-            // Verificar se a data da reserva sé futura
+            // Verificar se a data da reserva é futura
             if (dataHoraReserva <= agora)
             {
                 throw new ApplicationException("A reserva deve ser para uma data futura!");
@@ -182,18 +182,19 @@ namespace VittorioApiT2M.Application.Services
                 throw new ApplicationException("As reservas são permitidas somente de terça a domingo!");
             }
 
-            // Verificar se o usuário já tem uma reserva no mesmo dia
+            // Verificar se o cliente já tem uma reserva no mesmo dia
             var reservasExistentes = await _reservaRepository.ObterReservasPorClienteIdESemana(
                 reservaDto.ClienteId,
                 reservaDto.DataReserva.Date,
-                reservaDto.DataReserva.Date.AddDays(6)
+                reservaDto.DataReserva.Date
             );
 
-            if (reservasExistentes.Any())
+            if (reservasExistentes.Any(r => r.DataReserva.Date == reservaDto.DataReserva.Date))
             {
                 throw new ApplicationException("Você já possui uma reserva para este dia!");
             }
         }
+
 
     }
 }
