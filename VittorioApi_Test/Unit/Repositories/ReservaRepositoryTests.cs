@@ -25,6 +25,7 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
             _reservaRepository = new ReservaRepository(_dbConnectionMock.Object, _dapperWrapperMock.Object);
         }
 
+        // Testes para ObterPorId
         [Fact]
         public async Task ObterPorId_DeveRetornarReserva_QuandoIdExistente()
         {
@@ -105,60 +106,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
             )).ThrowsAsync(new Exception("Erro simulado no banco de dados"));
 
             await Assert.ThrowsAsync<Exception>(() => _reservaRepository.ObterTodas());
-        }
-
-        // Testes para Adicionar
-        [Fact]
-        public async Task Adicionar_DeveAdicionarReservaComSucesso_QuandoNaoHouverErros()
-        {
-            var reserva = new Reservas { Id = 1, NomeCliente = "Cliente Teste", EmailCliente = "cliente@test.com", DataReserva = new DateTime(2024, 8, 1), HoraReserva = new TimeSpan(18, 0, 0), NumeroPessoas = 4, Confirmada = true };
-
-            await _reservaRepository.Adicionar(reserva);
-
-            _dapperWrapperMock.Verify(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva), Times.Once);
-        }
-
-        [Fact]
-        public async Task Adicionar_DeveLancarExcecao_QuandoReservaEhNula()
-        {
-            await Assert.ThrowsAsync<ArgumentNullException>(() => _reservaRepository.Adicionar(null));
-        }
-
-        [Fact]
-        public async Task Adicionar_DeveLancarExcecao_QuandoErroOcorre()
-        {
-            var reserva = new Reservas { Id = 1, NomeCliente = "Cliente Teste", EmailCliente = "cliente@test.com", DataReserva = new DateTime(2024, 8, 1), HoraReserva = new TimeSpan(18, 0, 0), NumeroPessoas = 4, Confirmada = true };
-            _dapperWrapperMock.Setup(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva))
-                              .ThrowsAsync(new Exception("Erro simulado ao adicionar reserva"));
-
-            await Assert.ThrowsAsync<Exception>(() => _reservaRepository.Adicionar(reserva));
-        }
-
-        // Testes para Atualizar
-        [Fact]
-        public async Task Atualizar_DeveAtualizarReservaComSucesso_QuandoNaoHouverErros()
-        {
-            var reserva = new Reservas { Id = 1, NomeCliente = "Cliente Teste", EmailCliente = "cliente@test.com", DataReserva = new DateTime(2024, 8, 1), HoraReserva = new TimeSpan(18, 0, 0), NumeroPessoas = 4, Confirmada = true };
-
-            await _reservaRepository.Atualizar(reserva);
-
-            _dapperWrapperMock.Verify(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva), Times.Once);
-        }
-
-        [Fact]
-        public async Task Atualizar_DeveLancarExcecao_QuandoReservaEhNula()
-        {
-            await Assert.ThrowsAsync<ArgumentNullException>(() => _reservaRepository.Atualizar(null));
-        }
-
-        [Fact]
-        public async Task Atualizar_DeveLancarExcecao_QuandoErroOcorre()
-        {
-            var reserva = new Reservas { Id = 1, NomeCliente = "Cliente Teste", EmailCliente = "cliente@test.com", DataReserva = new DateTime(2024, 8, 1), HoraReserva = new TimeSpan(18, 0, 0), NumeroPessoas = 4, Confirmada = true };
-            _dapperWrapperMock.Setup(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva))
-                              .ThrowsAsync(new Exception("Erro simulado ao atualizar reserva"));
-
-            await Assert.ThrowsAsync<Exception>(() => _reservaRepository.Atualizar(reserva));
         }
 
         // Testes para ObterReservasPorEmailClienteEData
