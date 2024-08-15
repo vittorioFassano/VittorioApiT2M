@@ -16,7 +16,6 @@ namespace VittorioApiT2M.Application.Services
         {
             _reservaRepository = reservaRepository;
         }
-
         public async Task<IEnumerable<ReservaDto>> ObterTodasReservas()
         {
             try

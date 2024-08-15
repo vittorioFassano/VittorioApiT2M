@@ -9,9 +9,9 @@ namespace VittorioApiT2M.Api.Controllers
     [Route("api/[controller]")]
     public class ReservaController : ControllerBase
     {
-        private readonly ReservaAppService _reservaAppService;
+        private readonly IReservaAppService _reservaAppService;
 
-        public ReservaController(ReservaAppService reservaAppService)
+        public ReservaController(IReservaAppService reservaAppService)
         {
             _reservaAppService = reservaAppService;
         }
@@ -89,7 +89,6 @@ namespace VittorioApiT2M.Api.Controllers
             return Ok(reservaAtualizada);
         }
 
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoverReserva(int id)
         {
@@ -135,6 +134,5 @@ namespace VittorioApiT2M.Api.Controllers
                 return StatusCode(500, $"Erro ao confirmar reserva: {ex.Message}");
             }
         }
-
     }
 }
