@@ -10,6 +10,7 @@ using VittorioApiT2M.Domain.Repositories;
 using VittorioApiT2M.Infrastructure.Repositories;
 using VittorioApiT2M.Infrastructure.Extensions;
 using VittorioApiT2M.API.Extensions;
+using VittorioApiT2M.Application.Data;
 
 namespace VittorioApiT2M.API
 {
@@ -21,7 +22,6 @@ namespace VittorioApiT2M.API
         }
 
         public IConfiguration Configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
@@ -30,9 +30,20 @@ namespace VittorioApiT2M.API
             services.AddScoped<IDbConnection>(sp =>
                 new NpgsqlConnection(Configuration.GetConnectionString("DefaultConnection")));
 
+            // Registrar a interface IDapperWrapper e sua implementação DapperWrapper
+            services.AddScoped<IDapperWrapper, DapperWrapper>();
+
+            // Registrar o repositório IReservaRepository e sua implementação ReservaRepository
+            services.AddScoped<IReservaRepository, ReservaRepository>();
+
+            // Registrar outros serviços de infraestrutura
             services.AddInfrastructureServices();
+
+            // Registrar o serviço de aplicação ReservaAppService
             services.AddScoped<ReservaAppService>();
         }
+
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

@@ -1,19 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Threading.Tasks;
 using Dapper;
-using Microsoft.Data.SqlClient;
 using VittorioApiT2M.Domain.Entities;
 using VittorioApiT2M.Domain.Repositories;
-using System.Data;
-using System;
+using VittorioApiT2M.Application.Data;
 
 namespace VittorioApiT2M.Infrastructure.Repositories
 {
     public class ReservaRepository : IReservaRepository
     {
+        private readonly IDapperWrapper _dapperWrapper;
         private readonly IDbConnection _dbConnection;
 
-        public ReservaRepository(IDbConnection dbConnection)
+        public ReservaRepository(IDbConnection dbConnection, IDapperWrapper dapperWrapper)
         {
             _dbConnection = dbConnection;
+            _dapperWrapper = dapperWrapper;
         }
 
         public async Task<Reservas?> ObterPorId(int id)
@@ -21,16 +25,11 @@ namespace VittorioApiT2M.Infrastructure.Repositories
             try
             {
                 var query = "SELECT * FROM Reservas WHERE Id = @Id";
-                return await _dbConnection.QuerySingleOrDefaultAsync<Reservas>(query, new { Id = id });
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
-                throw;
+                return await _dapperWrapper.QuerySingleOrDefaultAsync<Reservas>(_dbConnection, query, new { Id = id });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro inesperado: {ex.Message}");
+                Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
                 throw;
             }
         }
@@ -40,16 +39,11 @@ namespace VittorioApiT2M.Infrastructure.Repositories
             try
             {
                 var query = "SELECT * FROM Reservas";
-                return await _dbConnection.QueryAsync<Reservas>(query);
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
-                throw;
+                return await _dapperWrapper.QueryAsync<Reservas>(_dbConnection, query);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro inesperado: {ex.Message}");
+                Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
                 throw;
             }
         }
@@ -64,16 +58,11 @@ namespace VittorioApiT2M.Infrastructure.Repositories
             try
             {
                 var query = "INSERT INTO Reservas (ClienteId, DataReserva, HoraReserva, NumeroPessoas, Confirmada) VALUES (@ClienteId, @DataReserva, @HoraReserva, @NumeroPessoas, @Confirmada)";
-                await _dbConnection.ExecuteAsync(query, reserva);
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"Erro ao adicionar reserva no banco de dados: {ex.Message}");
-                throw;
+                await _dapperWrapper.ExecuteAsync(_dbConnection, query, reserva);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro inesperado ao adicionar reserva: {ex.Message}");
+                Console.WriteLine($"Erro ao adicionar reserva no banco de dados: {ex.Message}");
                 throw;
             }
         }
@@ -88,16 +77,11 @@ namespace VittorioApiT2M.Infrastructure.Repositories
             try
             {
                 var query = "UPDATE Reservas SET ClienteId = @ClienteId, DataReserva = @DataReserva, HoraReserva = @HoraReserva, NumeroPessoas = @NumeroPessoas, Confirmada = @Confirmada WHERE Id = @Id";
-                await _dbConnection.ExecuteAsync(query, reserva);
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"Erro ao atualizar reserva no banco de dados: {ex.Message}");
-                throw;
+                await _dapperWrapper.ExecuteAsync(_dbConnection, query, reserva);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro inesperado ao atualizar reserva: {ex.Message}");
+                Console.WriteLine($"Erro ao atualizar reserva no banco de dados: {ex.Message}");
                 throw;
             }
         }
@@ -107,19 +91,15 @@ namespace VittorioApiT2M.Infrastructure.Repositories
             try
             {
                 var query = "DELETE FROM Reservas WHERE Id = @Id";
-                await _dbConnection.ExecuteAsync(query, new { Id = id });
+                await _dapperWrapper.ExecuteAsync(_dbConnection, query, new { Id = id });
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao remover reserva do banco de dados: {ex.Message}");
                 throw;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro inesperado ao remover reserva: {ex.Message}");
-                throw;
-            }
         }
+
         public async Task<IEnumerable<Reservas>> ObterReservasPorClienteIdESemana(int clienteId, DateTime inicioSemana, DateTime fimSemana)
         {
             if (inicioSemana > fimSemana)
@@ -130,25 +110,19 @@ namespace VittorioApiT2M.Infrastructure.Repositories
             try
             {
                 var query = @"
-            SELECT * 
-            FROM Reservas 
-            WHERE ClienteId = @ClienteId 
-            AND DataReserva >= @InicioSemana 
-            AND DataReserva <= @FimSemana";
+                    SELECT * 
+                    FROM Reservas 
+                    WHERE ClienteId = @ClienteId 
+                    AND DataReserva >= @InicioSemana 
+                    AND DataReserva <= @FimSemana";
 
-                return await _dbConnection.QueryAsync<Reservas>(query, new { ClienteId = clienteId, InicioSemana = inicioSemana.Date, FimSemana = fimSemana.Date });
+                return await _dapperWrapper.QueryAsync<Reservas>(_dbConnection, query, new { ClienteId = clienteId, InicioSemana = inicioSemana.Date, FimSemana = fimSemana.Date });
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
                 throw;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro inesperado: {ex.Message}");
-                throw;
-            }
         }
-
     }
 }
