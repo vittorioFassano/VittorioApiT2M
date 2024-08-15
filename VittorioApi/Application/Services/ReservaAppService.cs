@@ -8,7 +8,7 @@ using VittorioApiT2M.Domain.Repositories;
 
 namespace VittorioApiT2M.Application.Services
 {
-    public class ReservaAppService
+    public class ReservaAppService : IReservaAppService
     {
         private readonly IReservaRepository _reservaRepository;
 
@@ -193,7 +193,5 @@ namespace VittorioApiT2M.Application.Services
                 throw new ApplicationException("Você já possui uma reserva para este dia!");
             }
         }
-
-
     }
 }

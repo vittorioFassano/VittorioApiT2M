@@ -30,20 +30,12 @@ namespace VittorioApiT2M.API
             services.AddScoped<IDbConnection>(sp =>
                 new NpgsqlConnection(Configuration.GetConnectionString("DefaultConnection")));
 
-            // Registrar a interface IDapperWrapper e sua implementação DapperWrapper
             services.AddScoped<IDapperWrapper, DapperWrapper>();
-
-            // Registrar o repositório IReservaRepository e sua implementação ReservaRepository
             services.AddScoped<IReservaRepository, ReservaRepository>();
 
-            // Registrar outros serviços de infraestrutura
-            services.AddInfrastructureServices();
-
-            // Registrar o serviço de aplicação ReservaAppService
-            services.AddScoped<ReservaAppService>();
+            // Registrar a interface IReservaAppService e sua implementação ReservaAppService
+            services.AddScoped<IReservaAppService, ReservaAppService>();
         }
-
-
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
