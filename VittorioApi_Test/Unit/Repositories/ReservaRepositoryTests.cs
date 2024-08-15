@@ -77,5 +77,136 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _reservaRepository.ObterPorId(reservaId));
         }
+
+        ///////////////
+
+        // Teste para ObterTodas
+        [Fact]
+        public async Task ObterTodas_DeveRetornarReservas_QuandoNaoHouverErros()
+        {
+            // Arrange
+            var reservasEsperadas = new List<Reservas>
+    {
+        new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 },
+        new Reservas { Id = 2, ClienteId = 2, NumeroPessoas = 2 }
+    };
+
+            _dapperWrapperMock.Setup(d => d.QueryAsync<Reservas>(
+                It.IsAny<IDbConnection>(),
+                It.IsAny<string>(),
+                It.IsAny<object>()
+            )).ReturnsAsync(reservasEsperadas);
+
+            // Act
+            var resultado = await _reservaRepository.ObterTodas();
+
+            // Assert
+            Assert.NotNull(resultado);
+            Assert.Equal(reservasEsperadas.Count, resultado.Count());
+        }
+
+
+        [Fact]
+        public async Task ObterTodas_DeveLancarExcecao_QuandoErroOcorre()
+        {
+            // Arrange
+            _dapperWrapperMock.Setup(d => d.QueryAsync<Reservas>(
+                It.IsAny<IDbConnection>(),
+                It.IsAny<string>(),
+                It.IsAny<object>()
+            )).ThrowsAsync(new Exception("Erro simulado no banco de dados"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => _reservaRepository.ObterTodas());
+        }
+
+        // Teste para Adicionar
+
+        [Fact]
+        public async Task Adicionar_DeveAdicionarReservaComSucesso_QuandoNaoHouverErros()
+        {
+            // Arrange
+            var reserva = new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 };
+
+            // Act
+            await _reservaRepository.Adicionar(reserva);
+
+            // Assert
+            _dapperWrapperMock.Verify(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva), Times.Once);
+        }
+
+        [Fact]
+        public async Task Adicionar_DeveLancarExcecao_QuandoReservaEhNula()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _reservaRepository.Adicionar(null));
+        }
+
+        [Fact]
+        public async Task Adicionar_DeveLancarExcecao_QuandoErroOcorre()
+        {
+            // Arrange
+            var reserva = new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 };
+            _dapperWrapperMock.Setup(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva))
+                              .ThrowsAsync(new Exception("Erro simulado ao adicionar reserva"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => _reservaRepository.Adicionar(reserva));
+        }
+
+
+        // Teste para Atualizar
+        [Fact]
+        public async Task Atualizar_DeveAtualizarReservaComSucesso_QuandoNaoHouverErros()
+        {
+            // Arrange
+            var reserva = new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 };
+
+            // Act
+            await _reservaRepository.Atualizar(reserva);
+
+            // Assert
+            _dapperWrapperMock.Verify(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva), Times.Once);
+        }
+
+        [Fact]
+        public async Task Atualizar_DeveLancarExcecao_QuandoReservaEhNula()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _reservaRepository.Atualizar(null));
+        }
+
+        [Fact]
+        public async Task Atualizar_DeveLancarExcecao_QuandoErroOcorre()
+        {
+            // Arrange
+            var reserva = new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 };
+            _dapperWrapperMock.Setup(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva))
+                              .ThrowsAsync(new Exception("Erro simulado ao atualizar reserva"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => _reservaRepository.Atualizar(reserva));
+        }
+
+
+        // Teste para ObterReservasPorClienteIdESemana
+
+
+        [Fact]
+        public async Task ObterReservasPorClienteIdESemana_DeveLancarExcecao_QuandoDataInicioEhPosteriorADataFim()
+        {
+            // Arrange
+            var clienteId = 1;
+            var inicioSemana = new DateTime(2024, 8, 8);
+            var fimSemana = new DateTime(2024, 8, 7);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(() => _reservaRepository.ObterReservasPorClienteIdESemana(clienteId, inicioSemana, fimSemana));
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+
+
     }
 }
