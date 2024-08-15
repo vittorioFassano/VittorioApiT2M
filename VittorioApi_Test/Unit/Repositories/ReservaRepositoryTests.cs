@@ -25,7 +25,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public async Task ObterPorId_DeveRetornarReserva_QuandoIdExistente()
         {
-            // Arrange
             var reservaId = 1;
             var reservaEsperada = new Reservas { Id = reservaId, ClienteId = 1, NumeroPessoas = 4 };
 
@@ -35,10 +34,8 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
                 It.IsAny<object>()
             )).ReturnsAsync(reservaEsperada);
 
-            // Act
             var resultado = await _reservaRepository.ObterPorId(reservaId);
 
-            // Assert
             Assert.NotNull(resultado);
             Assert.Equal(reservaId, resultado.Id);
         }
@@ -46,7 +43,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public async Task ObterPorId_DeveRetornarNull_QuandoIdNaoExistente()
         {
-            // Arrange
             var reservaId = 99;
 
             _dapperWrapperMock.Setup(d => d.QuerySingleOrDefaultAsync<Reservas>(
@@ -55,17 +51,14 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
                 It.IsAny<object>()
             )).ReturnsAsync((Reservas)null);
 
-            // Act
             var resultado = await _reservaRepository.ObterPorId(reservaId);
 
-            // Assert
             Assert.Null(resultado);
         }
 
         [Fact]
         public async Task ObterPorId_DeveLancarExcecao_QuandoErroOcorre()
         {
-            // Arrange
             var reservaId = 1;
 
             _dapperWrapperMock.Setup(d => d.QuerySingleOrDefaultAsync<Reservas>(
@@ -74,17 +67,13 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
                 It.IsAny<object>()
             )).ThrowsAsync(new Exception("Erro simulado no banco de dados"));
 
-            // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _reservaRepository.ObterPorId(reservaId));
         }
 
-        ///////////////
-
-        // Teste para ObterTodas
+        // Testes para ObterTodas
         [Fact]
         public async Task ObterTodas_DeveRetornarReservas_QuandoNaoHouverErros()
         {
-            // Arrange
             var reservasEsperadas = new List<Reservas>
     {
         new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 },
@@ -97,10 +86,8 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
                 It.IsAny<object>()
             )).ReturnsAsync(reservasEsperadas);
 
-            // Act
             var resultado = await _reservaRepository.ObterTodas();
 
-            // Assert
             Assert.NotNull(resultado);
             Assert.Equal(reservasEsperadas.Count, resultado.Count());
         }
@@ -109,104 +96,146 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public async Task ObterTodas_DeveLancarExcecao_QuandoErroOcorre()
         {
-            // Arrange
             _dapperWrapperMock.Setup(d => d.QueryAsync<Reservas>(
                 It.IsAny<IDbConnection>(),
                 It.IsAny<string>(),
                 It.IsAny<object>()
             )).ThrowsAsync(new Exception("Erro simulado no banco de dados"));
 
-            // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _reservaRepository.ObterTodas());
         }
 
-        // Teste para Adicionar
-
+        // Testes para Adicionar
         [Fact]
         public async Task Adicionar_DeveAdicionarReservaComSucesso_QuandoNaoHouverErros()
         {
-            // Arrange
             var reserva = new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 };
 
-            // Act
             await _reservaRepository.Adicionar(reserva);
 
-            // Assert
             _dapperWrapperMock.Verify(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva), Times.Once);
         }
 
         [Fact]
         public async Task Adicionar_DeveLancarExcecao_QuandoReservaEhNula()
         {
-            // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _reservaRepository.Adicionar(null));
         }
 
         [Fact]
         public async Task Adicionar_DeveLancarExcecao_QuandoErroOcorre()
         {
-            // Arrange
             var reserva = new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 };
             _dapperWrapperMock.Setup(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva))
                               .ThrowsAsync(new Exception("Erro simulado ao adicionar reserva"));
 
-            // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _reservaRepository.Adicionar(reserva));
         }
 
-
-        // Teste para Atualizar
+        // Testes para Atualizar
         [Fact]
         public async Task Atualizar_DeveAtualizarReservaComSucesso_QuandoNaoHouverErros()
         {
-            // Arrange
             var reserva = new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 };
 
-            // Act
             await _reservaRepository.Atualizar(reserva);
 
-            // Assert
             _dapperWrapperMock.Verify(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva), Times.Once);
         }
 
         [Fact]
         public async Task Atualizar_DeveLancarExcecao_QuandoReservaEhNula()
         {
-            // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _reservaRepository.Atualizar(null));
         }
 
         [Fact]
         public async Task Atualizar_DeveLancarExcecao_QuandoErroOcorre()
         {
-            // Arrange
             var reserva = new Reservas { Id = 1, ClienteId = 1, NumeroPessoas = 4 };
             _dapperWrapperMock.Setup(d => d.ExecuteAsync(It.IsAny<IDbConnection>(), It.IsAny<string>(), reserva))
                               .ThrowsAsync(new Exception("Erro simulado ao atualizar reserva"));
 
-            // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _reservaRepository.Atualizar(reserva));
         }
 
-
-        // Teste para ObterReservasPorClienteIdESemana
-
-
+        // Testes para ObterReservasPorClienteIdESemana
         [Fact]
         public async Task ObterReservasPorClienteIdESemana_DeveLancarExcecao_QuandoDataInicioEhPosteriorADataFim()
         {
-            // Arrange
             var clienteId = 1;
             var inicioSemana = new DateTime(2024, 8, 8);
             var fimSemana = new DateTime(2024, 8, 7);
 
-            // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(() => _reservaRepository.ObterReservasPorClienteIdESemana(clienteId, inicioSemana, fimSemana));
         }
 
-        //////////////////////////////////////////////////////////////////////////////////
+        [Fact]
+        public async Task ObterReservasPorClienteIdESemana_DeveRetornarReservas_QuandoParametrosSaoValidos()
+        {
+            var clienteId = 1;
+            var inicioSemana = new DateTime(2024, 8, 1);
+            var fimSemana = new DateTime(2024, 8, 7);
 
+            var reservasEsperadas = new List<Reservas>
+            {
+                new Reservas
+                {
+                    Id = 1,
+                    ClienteId = clienteId,
+                    DataReserva = new DateTime(2024, 8, 2),
+                    HoraReserva = new TimeSpan(18, 0, 0),
+                    NumeroPessoas = 4,
+                    Confirmada = true
+                },
+                new Reservas
+                {
+                    Id = 2,
+                    ClienteId = clienteId,
+                    DataReserva = new DateTime(2024, 8, 5),
+                    HoraReserva = new TimeSpan(20, 0, 0),
+                    NumeroPessoas = 2,
+                    Confirmada = false
+                }
+            };
 
+            _dapperWrapperMock
+               .Setup(d => d.QueryAsync<Reservas>(
+                    It.IsAny<IDbConnection>(),
+                    It.IsAny<string>(),
+                    It.IsAny<object>()
+                ))
+                .ReturnsAsync(reservasEsperadas);
+
+            var reservasObtidas = await _reservaRepository.ObterReservasPorClienteIdESemana(clienteId, inicioSemana, fimSemana);
+
+            Assert.NotNull(reservasObtidas);
+            Assert.Equal(2, reservasObtidas.Count());
+            Assert.Contains(reservasEsperadas, r => r.Id == reservasObtidas.First().Id);
+        }
+
+        [Fact]
+        public async Task Remover_DeveLancarExcecao_QuandoErroNoBancoDeDados()
+        {
+
+            var id = 1;
+            var exceptionMessage = "Erro no banco de dados";
+
+            _dapperWrapperMock
+                .Setup(d => d.ExecuteAsync(
+                    It.IsAny<IDbConnection>(),
+                    It.IsAny<string>(),
+                    It.IsAny<object>()
+                ))
+                .ThrowsAsync(new Exception(exceptionMessage));
+
+            var exception = await Assert.ThrowsAsync<Exception>(() => _reservaRepository.Remover(id));
+            Assert.Equal(exceptionMessage, exception.Message);
+        }
+
+        /*
+        Remover_DeveRemoverReserva_QuandoIdExistente()
+        */
 
     }
 }
