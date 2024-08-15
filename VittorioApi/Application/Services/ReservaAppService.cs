@@ -16,6 +16,7 @@ namespace VittorioApiT2M.Application.Services
         {
             _reservaRepository = reservaRepository;
         }
+
         public async Task<IEnumerable<ReservaDto>> ObterTodasReservas()
         {
             try
@@ -24,7 +25,8 @@ namespace VittorioApiT2M.Application.Services
                 return reservas.Select(r => new ReservaDto
                 {
                     Id = r.Id,
-                    ClienteId = r.ClienteId,
+                    NomeCliente = r.NomeCliente,
+                    EmailCliente = r.EmailCliente,
                     DataReserva = r.DataReserva,
                     HoraReserva = r.HoraReserva,
                     NumeroPessoas = r.NumeroPessoas,
@@ -51,7 +53,8 @@ namespace VittorioApiT2M.Application.Services
                     throw new InvalidOperationException($"Reserva com ID {reservaDto.Id} não encontrada.");
                 }
 
-                reservaExistente.ClienteId = reservaDto.ClienteId;
+                reservaExistente.NomeCliente = reservaDto.NomeCliente;
+                reservaExistente.EmailCliente = reservaDto.EmailCliente;
                 reservaExistente.DataReserva = reservaDto.DataReserva;
                 reservaExistente.HoraReserva = reservaDto.HoraReserva;
                 reservaExistente.NumeroPessoas = reservaDto.NumeroPessoas;
@@ -74,7 +77,8 @@ namespace VittorioApiT2M.Application.Services
 
                 var reserva = new Reservas
                 {
-                    ClienteId = reservaDto.ClienteId,
+                    NomeCliente = reservaDto.NomeCliente,
+                    EmailCliente = reservaDto.EmailCliente,
                     DataReserva = reservaDto.DataReserva,
                     HoraReserva = reservaDto.HoraReserva,
                     NumeroPessoas = reservaDto.NumeroPessoas,
@@ -94,6 +98,12 @@ namespace VittorioApiT2M.Application.Services
         {
             try
             {
+                var reservaExistente = await _reservaRepository.ObterPorId(id);
+                if (reservaExistente == null)
+                {
+                    throw new ApplicationException($"Reserva com ID {id} não encontrada.");
+                }
+
                 await _reservaRepository.Remover(id);
             }
             catch (Exception ex)
@@ -116,7 +126,8 @@ namespace VittorioApiT2M.Application.Services
                 return new ReservaDto
                 {
                     Id = reserva.Id,
-                    ClienteId = reserva.ClienteId,
+                    NomeCliente = reserva.NomeCliente,
+                    EmailCliente = reserva.EmailCliente,
                     DataReserva = reserva.DataReserva,
                     HoraReserva = reserva.HoraReserva,
                     NumeroPessoas = reserva.NumeroPessoas,
@@ -140,7 +151,6 @@ namespace VittorioApiT2M.Application.Services
                     throw new ApplicationException($"Reserva com ID {id} não encontrada.");
                 }
 
-                // Verificar se a confirmação é válida (até 24 horas antes do horário marcado)
                 if (DateTime.UtcNow > reserva.DataReserva.Add(reserva.HoraReserva) - TimeSpan.FromHours(24))
                 {
                     throw new ApplicationException("Sua reserva foi CANCELADA, pois não houve confirmação em até 24 horas antes!");
@@ -159,31 +169,26 @@ namespace VittorioApiT2M.Application.Services
         private async Task ValidarReserva(ReservaDto reservaDto)
         {
             var agora = DateTime.UtcNow;
-
             var dataHoraReserva = reservaDto.DataReserva.Date.Add(reservaDto.HoraReserva);
 
-            // Verificar se a data da reserva é futura
             if (dataHoraReserva <= agora)
             {
                 throw new ApplicationException("A reserva deve ser para uma data futura!");
             }
 
-            // Verificar se o horário está dentro do intervalo permitido (11h - 23h)
             if (reservaDto.HoraReserva < new TimeSpan(11, 0, 0) || reservaDto.HoraReserva > new TimeSpan(23, 59, 0))
             {
                 throw new ApplicationException("O horário da reserva deve estar entre 11h e 23h!");
             }
 
-            // Verificar se é um dia da semana válido (terça a domingo)
             var diaDaSemana = reservaDto.DataReserva.DayOfWeek;
             if (diaDaSemana == DayOfWeek.Monday)
             {
                 throw new ApplicationException("As reservas são permitidas somente de terça a domingo!");
             }
 
-            // Verificar se o cliente já tem uma reserva no mesmo dia
-            var reservasExistentes = await _reservaRepository.ObterReservasPorClienteIdESemana(
-                reservaDto.ClienteId,
+            var reservasExistentes = await _reservaRepository.ObterReservasPorEmailClienteEData(
+                reservaDto.EmailCliente,
                 reservaDto.DataReserva.Date,
                 reservaDto.DataReserva.Date
             );

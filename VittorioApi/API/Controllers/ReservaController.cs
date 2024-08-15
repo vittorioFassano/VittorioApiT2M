@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using VittorioApiT2M.Application.DTOs;
 using VittorioApiT2M.Application.Services;
@@ -70,7 +72,9 @@ namespace VittorioApiT2M.Api.Controllers
                 return NotFound($"Reserva com ID {id} não encontrada.");
             }
 
-            reservaExistente.ClienteId = reservaDto.ClienteId;
+            // Atualiza os campos da reserva existente
+            reservaExistente.NomeCliente = reservaDto.NomeCliente;
+            reservaExistente.EmailCliente = reservaDto.EmailCliente;
             reservaExistente.DataReserva = reservaDto.DataReserva;
             reservaExistente.HoraReserva = reservaDto.HoraReserva;
             reservaExistente.NumeroPessoas = reservaDto.NumeroPessoas;

@@ -11,6 +11,7 @@ namespace VittorioApiT2M.Domain.Repositories
         Task Adicionar(Reservas reserva);
         Task Atualizar(Reservas reserva);
         Task Remover(int id);
-        Task<IEnumerable<Reservas>> ObterReservasPorClienteIdESemana(int clienteId, DateTime inicioSemana, DateTime fimSemana);
+        Task<IEnumerable<Reservas>> ObterReservasPorEmailClienteEData(string emailCliente, DateTime dataInicial, DateTime dataFinal);
+        Task<IEnumerable<Reservas>> ObterReservasPorNomeEmailESemana(string nomeCliente, string emailCliente, DateTime inicioSemana, DateTime fimSemana);
     }
 }

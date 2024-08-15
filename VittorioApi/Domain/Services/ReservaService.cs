@@ -3,6 +3,7 @@ using VittorioApiT2M.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VittorioApiT2M.Application.DTOs;
 
 namespace VittorioApiT2M.Domain.Services
 {
@@ -36,18 +37,20 @@ namespace VittorioApiT2M.Domain.Services
             }
         }
 
-        public async Task<IEnumerable<Reservas>> ObterReservasPorClienteIdESemana(int clienteId, DateTime inicioSemana, DateTime fimSemana)
+
+        public async Task<IEnumerable<ReservaDto>> ObterReservasPorNomeEmailESemana(string nomeCliente, string emailCliente, DateTime inicioSemana, DateTime fimSemana)
         {
-            try
+            var reservas = await _reservaRepository.ObterReservasPorNomeEmailESemana(nomeCliente, emailCliente, inicioSemana, fimSemana);
+            return reservas.Select(r => new ReservaDto
             {
-                var reservas = await _reservaRepository.ObterReservasPorClienteIdESemana(clienteId, inicioSemana, fimSemana);
-                return reservas;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro ao obter reservas por cliente e semana: {ex.Message}");
-                throw new ApplicationException("Ocorreu um erro ao obter as reservas.", ex);
-            }
+                Id = r.Id,
+                NomeCliente = r.NomeCliente,
+                EmailCliente = r.EmailCliente,
+                DataReserva = r.DataReserva,
+                HoraReserva = r.HoraReserva,
+                NumeroPessoas = r.NumeroPessoas,
+                Confirmada = r.Confirmada
+            });
         }
     }
 }

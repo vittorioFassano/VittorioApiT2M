@@ -7,6 +7,7 @@ using Xunit;
 using VittorioApiT2M.Domain.Entities;
 using VittorioApiT2M.Domain.Repositories;
 using VittorioApiT2M.Domain.Services;
+using VittorioApiT2M.Application.DTOs;
 
 namespace VittorioApiT2M.Tests.Unit.Domain
 {
@@ -24,11 +25,14 @@ namespace VittorioApiT2M.Tests.Unit.Domain
         [Fact]
         public async Task ConfirmarReserva_ReservaExiste_ConfirmaReserva()
         {
+            // Arrange
             var reserva = new Reservas { Id = 1, Confirmada = false };
             _mockReservaRepository.Setup(repo => repo.ObterPorId(1)).ReturnsAsync(reserva);
 
+            // Act
             await _reservaService.ConfirmarReserva(1);
 
+            // Assert
             Assert.True(reserva.Confirmada);
             _mockReservaRepository.Verify(repo => repo.Atualizar(reserva), Times.Once);
         }
@@ -36,15 +40,16 @@ namespace VittorioApiT2M.Tests.Unit.Domain
         [Fact]
         public async Task ConfirmarReserva_ReservaNaoExiste_LancaException()
         {
+            // Arrange
             _mockReservaRepository.Setup(repo => repo.ObterPorId(It.IsAny<int>())).ReturnsAsync((Reservas?)null);
 
+            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApplicationException>(() => _reservaService.ConfirmarReserva(1));
             Assert.Equal("Ocorreu um erro ao confirmar a reserva.", exception.Message);
         }
 
-
         [Fact]
-        public async Task ObterReservasPorClienteIdESemana_ReservaExistente_RetornaReservas()
+        public async Task ObterReservasPorNomeEmailESemana_ReservasExistentes_RetornaReservas()
         {
             // Arrange
             var reservas = new List<Reservas>
@@ -52,19 +57,31 @@ namespace VittorioApiT2M.Tests.Unit.Domain
                 new Reservas
                 {
                     Id = 1,
-                    ClienteId = 1,
-                    DataReserva = DateTime.SpecifyKind(new DateTime(2024, 08, 15), DateTimeKind.Utc)
+                    NomeCliente = "João Silva",
+                    EmailCliente = "joao.silva@example.com",
+                    DataReserva = new DateTime(2024, 08, 15, 0, 0, 0, DateTimeKind.Utc),
+                    HoraReserva = new TimeSpan(10, 0, 0),
+                    NumeroPessoas = 4,
+                    Confirmada = false
                 }
             };
-            _mockReservaRepository.Setup(repo => repo.ObterReservasPorClienteIdESemana(1, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+
+            _mockReservaRepository.Setup(repo => repo.ObterReservasPorNomeEmailESemana("João Silva", "joao.silva@example.com", new DateTime(2024, 08, 10, 0, 0, 0, DateTimeKind.Utc), new DateTime(2024, 08, 20, 0, 0, 0, DateTimeKind.Utc)))
                 .ReturnsAsync(reservas);
 
             // Act
-            var result = await _reservaService.ObterReservasPorClienteIdESemana(1, new DateTime(2024, 08, 10, 0, 0, 0, DateTimeKind.Utc), new DateTime(2024, 08, 20, 0, 0, 0, DateTimeKind.Utc));
+            var result = await _reservaService.ObterReservasPorNomeEmailESemana("João Silva", "joao.silva@example.com", new DateTime(2024, 08, 10, 0, 0, 0, DateTimeKind.Utc), new DateTime(2024, 08, 20, 0, 0, 0, DateTimeKind.Utc));
 
             // Assert
             Assert.Single(result);
-            Assert.Equal(1, result.First().Id);
+            var reservaDto = result.First();
+            Assert.Equal(1, reservaDto.Id);
+            Assert.Equal("João Silva", reservaDto.NomeCliente);
+            Assert.Equal("joao.silva@example.com", reservaDto.EmailCliente);
+            Assert.Equal(new DateTime(2024, 08, 15, 0, 0, 0, DateTimeKind.Utc), reservaDto.DataReserva);
+            Assert.Equal(new TimeSpan(10, 0, 0), reservaDto.HoraReserva);
+            Assert.Equal(4, reservaDto.NumeroPessoas);
+            Assert.False(reservaDto.Confirmada);
         }
     }
 }

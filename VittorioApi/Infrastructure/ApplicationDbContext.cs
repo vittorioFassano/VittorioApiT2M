@@ -11,6 +11,6 @@ namespace VittorioApiT2M.Infrastructure
         }
 
         public DbSet<Reservas> Reservas { get; set; }
-        public DbSet<Clientes> Clientes { get; set; }
+
     }
 }
