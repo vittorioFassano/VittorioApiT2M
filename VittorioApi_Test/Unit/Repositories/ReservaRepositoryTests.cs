@@ -10,7 +10,7 @@ using VittorioApiT2M.Domain.Repositories;
 using System.Data;
 using VittorioApiT2M.Application.Data;
 
-namespace VittorioApiT2M.Tests.Unit.Repositories
+namespace VittorioApi_Test.Unit.Repositories
 {
     public class ReservaRepositoryTests
     {
@@ -20,7 +20,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public void ObterPorId_DeveRetornarReservaValida()
         {
-            // Arrange
             var reserva = new Reservas
             {
                 Id = 1,
@@ -32,7 +31,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
                 Confirmada = true
             };
 
-            // Act & Assert
             Assert.NotNull(reserva);
             Assert.Equal(1, reserva.Id);
             Assert.Equal("Maria Oliveira", reserva.NomeCliente);
@@ -46,10 +44,8 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public void ObterPorId_DeveRetornarNull_QuandoReservaNaoExistir()
         {
-            // Arrange
             Reservas reserva = null;
 
-            // Act & Assert
             Assert.Null(reserva);
         }
 
@@ -57,7 +53,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public void ObterTodas_DeveRetornarListaDeReservas()
         {
-            // Arrange
             var reservas = new List<Reservas>
             {
                 new Reservas
@@ -82,7 +77,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
                 }
             };
 
-            // Act & Assert
             Assert.NotNull(reservas);
             Assert.Equal(2, reservas.Count);
             Assert.Equal("Carlos Andrade", reservas[0].NomeCliente);
@@ -92,10 +86,8 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public void ObterTodas_DeveRetornarListaVazia_QuandoNaoExistiremReservas()
         {
-            // Arrange
             var reservas = new List<Reservas>();
 
-            // Act & Assert
             Assert.Empty(reservas);
         }
 
@@ -103,7 +95,7 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public void Atualizar_DeveAtualizarReservaValida()
         {
-            // Arrange
+
             var reserva = new Reservas
             {
                 Id = 1,
@@ -115,7 +107,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
                 Confirmada = true
             };
 
-            // Act & Assert
             Assert.NotNull(reserva);
             Assert.Equal("Roberto Lima", reserva.NomeCliente);
             Assert.Equal("roberto.lima@example.com", reserva.EmailCliente);
@@ -126,44 +117,34 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public void Atualizar_DeveLancarExcecao_QuandoReservaForNula()
         {
-            // Arrange
             Reservas reserva = null;
 
-            // Act & Assert
             var exception = Assert.Throws<NullReferenceException>(() => reserva.ToString());
-            // Sem necessidade de verificar a mensagem, apenas a exceção
         }
 
         // Remover
         [Fact]
         public void Remover_DeveRemoverReserva_QuandoIdExistir()
         {
-            // Arrange
             var id = 1;
 
-            // Act & Assert
             Assert.Equal(1, id);
         }
 
         [Fact]
         public void Remover_DeveLancarExcecao_QuandoIdForInvalido()
         {
-            // Arrange
             var id = 0;
 
-            // Act & Assert
             Assert.True(id <= 0);
         }
 
-        // ObterReservasPorNomeEmailESemana
         [Fact]
         public void ObterReservasPorNomeEmailESemana_DeveLancarExcecao_QuandoInicioSemanaForMaiorQueFimSemana()
         {
-            // Arrange
             var inicioSemana = new DateTime(2024, 08, 25);
             var fimSemana = new DateTime(2024, 08, 24);
 
-            // Act & Assert
             var exception = Assert.Throws<ArgumentException>(() =>
             {
                 if (inicioSemana > fimSemana)
@@ -172,15 +153,12 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
             Assert.Equal("A data de início da semana não pode ser posterior à data de fim da semana.", exception.Message);
         }
 
-        // ObterReservasPorEmailClienteEData
         [Fact]
         public void ObterReservasPorEmailClienteEData_DeveLancarExcecao_QuandoDataInicialForMaiorQueDataFinal()
         {
-            // Arrange
             var dataInicial = new DateTime(2024, 08, 25);
             var dataFinal = new DateTime(2024, 08, 24);
 
-            // Act & Assert
             var exception = Assert.Throws<ArgumentException>(() =>
             {
                 if (dataInicial > dataFinal)
@@ -193,7 +171,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         [Fact]
         public void Adicionar_DeveAdicionarReservaValida()
         {
-            // Arrange
             var reserva = new Reservas
             {
                 Id = 1,
@@ -205,7 +182,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
                 Confirmada = false
             };
 
-            // Act & Assert
             Assert.NotNull(reserva);
             Assert.Equal(1, reserva.Id);
             Assert.Equal("Ana Costa", reserva.NomeCliente);
@@ -230,7 +206,6 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
             });
             Assert.Equal("Reserva não pode ser nula. (Parameter 'reserva')", exception.Message);
         }
-
 
     }
 }
