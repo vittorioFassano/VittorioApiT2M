@@ -64,8 +64,7 @@ namespace VittorioApiT2M.Application.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao atualizar reserva: {ex.Message}");
-                throw new ApplicationException("Erro ao atualizar reserva.", ex);
+                throw new ApplicationException("Erro ao atualizar reserva: " + ex.Message, ex);
             }
         }
 
@@ -89,8 +88,7 @@ namespace VittorioApiT2M.Application.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao adicionar reserva: {ex.Message}");
-                throw new ApplicationException("Erro ao adicionar reserva.", ex);
+                throw new ApplicationException("Erro ao adicionar reserva: " + ex.Message, ex);
             }
         }
 
@@ -176,7 +174,7 @@ namespace VittorioApiT2M.Application.Services
                 throw new ApplicationException("A reserva deve ser para uma data futura!");
             }
 
-            if (reservaDto.HoraReserva < new TimeSpan(11, 0, 0) || reservaDto.HoraReserva > new TimeSpan(23, 59, 0))
+            if (reservaDto.HoraReserva < new TimeSpan(11, 0, 0) || reservaDto.HoraReserva > new TimeSpan(23, 0, 0))
             {
                 throw new ApplicationException("O horário da reserva deve estar entre 11h e 23h!");
             }
@@ -185,6 +183,11 @@ namespace VittorioApiT2M.Application.Services
             if (diaDaSemana == DayOfWeek.Monday)
             {
                 throw new ApplicationException("As reservas são permitidas somente de terça a domingo!");
+            }
+
+            if (reservaDto.NumeroPessoas <= 0 || reservaDto.NumeroPessoas > 20)
+            {
+                throw new ApplicationException("O número de pessoas deve ser entre 1 e 20.");
             }
 
             var reservasExistentes = await _reservaRepository.ObterReservasPorEmailClienteEData(

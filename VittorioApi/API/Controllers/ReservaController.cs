@@ -52,12 +52,15 @@ namespace VittorioApiT2M.Api.Controllers
 
                 return CreatedAtAction(nameof(ObterReservaPorId), new { id = novaReserva.Id }, novaReserva);
             }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro ao criar reserva: {ex.Message}");
             }
         }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> AtualizarReserva(int id, [FromBody] ReservaDto reservaDto)
         {
@@ -129,12 +132,10 @@ namespace VittorioApiT2M.Api.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Retorna a mensagem de erro específico de validação
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                // Retorna um erro genérico
                 return StatusCode(500, $"Erro ao confirmar reserva: {ex.Message}");
             }
         }
