@@ -35,6 +35,17 @@ namespace VittorioApiT2M.API
 
             // Registrar a interface IReservaAppService e sua implementação ReservaAppService
             services.AddScoped<IReservaAppService, ReservaAppService>();
+
+            // Adicionar o serviço Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "Vittorio API",
+                    Version = "v1",
+                    Description = "API para gerenciar reservas"
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -42,6 +53,13 @@ namespace VittorioApiT2M.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vittorio API v1");
+                    c.RoutePrefix = string.Empty;
+                });
             }
             else
             {

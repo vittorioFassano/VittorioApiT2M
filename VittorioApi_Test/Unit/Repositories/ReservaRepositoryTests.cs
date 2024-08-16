@@ -18,7 +18,7 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
 
         // ID
         [Fact]
-        public async Task ObterPorId_DeveRetornarReservaValida()
+        public void ObterPorId_DeveRetornarReservaValida()
         {
             // Arrange
             var reserva = new Reservas
@@ -44,7 +44,7 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         }
 
         [Fact]
-        public async Task ObterPorId_DeveRetornarNull_QuandoReservaNaoExistir()
+        public void ObterPorId_DeveRetornarNull_QuandoReservaNaoExistir()
         {
             // Arrange
             Reservas reserva = null;
@@ -55,7 +55,7 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
 
         // ALL
         [Fact]
-        public async Task ObterTodas_DeveRetornarListaDeReservas()
+        public void ObterTodas_DeveRetornarListaDeReservas()
         {
             // Arrange
             var reservas = new List<Reservas>
@@ -90,7 +90,7 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
         }
 
         [Fact]
-        public async Task ObterTodas_DeveRetornarListaVazia_QuandoNaoExistiremReservas()
+        public void ObterTodas_DeveRetornarListaVazia_QuandoNaoExistiremReservas()
         {
             // Arrange
             var reservas = new List<Reservas>();
@@ -188,5 +188,49 @@ namespace VittorioApiT2M.Tests.Unit.Repositories
             });
             Assert.Equal("A data inicial não pode ser posterior à data final.", exception.Message);
         }
+
+        //Adicionar
+        [Fact]
+        public void Adicionar_DeveAdicionarReservaValida()
+        {
+            // Arrange
+            var reserva = new Reservas
+            {
+                Id = 1,
+                NomeCliente = "Ana Costa",
+                EmailCliente = "ana.costa@example.com",
+                DataReserva = new DateTime(2024, 08, 28),
+                HoraReserva = new TimeSpan(16, 00, 00),
+                NumeroPessoas = 4,
+                Confirmada = false
+            };
+
+            // Act & Assert
+            Assert.NotNull(reserva);
+            Assert.Equal(1, reserva.Id);
+            Assert.Equal("Ana Costa", reserva.NomeCliente);
+            Assert.Equal("ana.costa@example.com", reserva.EmailCliente);
+            Assert.Equal(new DateTime(2024, 08, 28), reserva.DataReserva);
+            Assert.Equal(new TimeSpan(16, 00, 00), reserva.HoraReserva);
+            Assert.Equal(4, reserva.NumeroPessoas);
+            Assert.False(reserva.Confirmada);
+        }
+
+        [Fact]
+        public void Adicionar_DeveLancarExcecao_QuandoReservaForNula()
+        {
+            Reservas reserva = null;
+
+            var exception = Assert.Throws<ArgumentNullException>(() =>
+            {
+                if (reserva == null)
+                {
+                    throw new ArgumentNullException(nameof(reserva), "Reserva não pode ser nula.");
+                }
+            });
+            Assert.Equal("Reserva não pode ser nula. (Parameter 'reserva')", exception.Message);
+        }
+
+
     }
 }
